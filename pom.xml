@@ -67,7 +67,7 @@
 
         <!-- TODO Are these correct versions? -->
         <bouncycastle.fips.version>1.0.2.3</bouncycastle.fips.version>
-        <bouncycastle.pkixfips.version>1.0.7</bouncycastle.pkixfips.version>
+        <bouncycastle.pkixfips.version>2.0.7</bouncycastle.pkixfips.version>
         <bouncycastle.tlsfips.version>1.0.14</bouncycastle.tlsfips.version>
 
         <cxf.version>3.3.10</cxf.version>
@@ -196,7 +196,7 @@
         <surefire.memory.metaspace>96m</surefire.memory.metaspace>
         <surefire.memory.metaspace.max>512m</surefire.memory.metaspace.max>
         <surefire.memory.settings>-Xms${surefire.memory.Xms} -Xmx${surefire.memory.Xmx} -XX:MetaspaceSize=${surefire.memory.metaspace} -XX:MaxMetaspaceSize=${surefire.memory.metaspace.max}</surefire.memory.settings>
-        <surefire.system.args></surefire.system.args>
+        <surefire.system.args/>
 
         <!-- Tomcat versions -->
         <tomcat8.version>8.5.76</tomcat8.version>
@@ -264,7 +264,7 @@
         </developer>
     </developers>
 
-    <contributors></contributors>
+    <contributors/>
 
     <modules>
         <module>boms</module>
