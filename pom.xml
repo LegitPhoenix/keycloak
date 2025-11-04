@@ -153,7 +153,7 @@
         <mariadb.version>10.6</mariadb.version>
         <mariadb-jdbc.version>2.7.2</mariadb-jdbc.version>
         <mssql.version>2019-latest</mssql.version>
-        <mssql-jdbc.version>9.2.0.jre8</mssql-jdbc.version>
+        <mssql-jdbc.version>10.2.4.jre8</mssql-jdbc.version>
         <!-- this is the oracle driver version also used in the Quarkus BOM -->
         <oracle-jdbc.version>21.5.0.0</oracle-jdbc.version>
 
@@ -196,7 +196,7 @@
         <surefire.memory.metaspace>96m</surefire.memory.metaspace>
         <surefire.memory.metaspace.max>512m</surefire.memory.metaspace.max>
         <surefire.memory.settings>-Xms${surefire.memory.Xms} -Xmx${surefire.memory.Xmx} -XX:MetaspaceSize=${surefire.memory.metaspace} -XX:MaxMetaspaceSize=${surefire.memory.metaspace.max}</surefire.memory.settings>
-        <surefire.system.args></surefire.system.args>
+        <surefire.system.args/>
 
         <!-- Tomcat versions -->
         <tomcat8.version>8.5.76</tomcat8.version>
@@ -264,7 +264,7 @@
         </developer>
     </developers>
 
-    <contributors></contributors>
+    <contributors/>
 
     <modules>
         <module>boms</module>
