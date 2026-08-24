@@ -417,7 +417,7 @@ public class AuthenticationManager {
                 try {
                     identityProvider.backchannelLogout(session, userSession, uriInfo, realm);
                 } catch (Exception e) {
-                    logger.warn("Exception at broker backchannel logout for broker " + brokerId, e);
+                    logger.warn("Exception at broker backchannel logout for broker {}", brokerId, e);
                     backchannelLogoutResponse.setLocalLogoutSucceeded(false);
                 }
             }
