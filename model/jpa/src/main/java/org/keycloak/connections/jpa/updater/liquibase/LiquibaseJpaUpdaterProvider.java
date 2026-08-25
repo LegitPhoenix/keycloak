@@ -147,6 +147,12 @@ public class LiquibaseJpaUpdaterProvider implements JpaUpdaterProvider {
                 changelogHistoryService.generateDeploymentId();
                 String deploymentId = changelogHistoryService.getDeploymentId();
 
+                // Validate deployment ID format to ensure it's safe for SQL execution
+                // Expected format: alphanumeric string up to 10 characters
+                if (deploymentId == null || !deploymentId.matches("^[a-zA-Z0-9]{1,10}$")) {
+                    throw new IllegalStateException("Invalid deployment ID format: " + deploymentId);
+                }
+
                 logger.debugv("Adding missing column {0}={1} to {2} table", DEPLOYMENT_ID_COLUMN, deploymentId,changelogTable.getName());
 
                 List<SqlStatement> statementsToExecute = new ArrayList<>();
