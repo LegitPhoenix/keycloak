@@ -146,19 +146,23 @@ public class QuarkusJpaUpdaterProvider implements JpaUpdaterProvider {
 
             // create DEPLOYMENT_ID column if it doesn't exist
             if (!hasDeploymentIdColumn) {
+                String tableName = changelogTable.getName();
+                if (tableName == null || !tableName.matches("^[a-zA-Z0-9_]+$")) {
+                    throw new LiquibaseException("Invalid changelog table name: " + tableName + ". Table name must contain only alphanumeric characters and underscores.");
+                }
                 ChangeLogHistoryService changelogHistoryService = ChangeLogHistoryServiceFactory.getInstance().getChangeLogService(database);
                 changelogHistoryService.generateDeploymentId();
                 String deploymentId = changelogHistoryService.getDeploymentId();
 
-                logger.debugv("Adding missing column {0}={1} to {2} table", DEPLOYMENT_ID_COLUMN, deploymentId,changelogTable.getName());
+                logger.debugv("Adding missing column {0}={1} to {2} table", DEPLOYMENT_ID_COLUMN, deploymentId,tableName);
 
                 List<SqlStatement> statementsToExecute = new ArrayList<>();
                 statementsToExecute.add(new AddColumnStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(),
-                        changelogTable.getName(), DEPLOYMENT_ID_COLUMN, "VARCHAR(10)", null));
-                statementsToExecute.add(new UpdateStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), changelogTable.getName())
+                        tableName, DEPLOYMENT_ID_COLUMN, "VARCHAR(10)", null));
+                statementsToExecute.add(new UpdateStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), tableName)
                         .addNewColumnValue(DEPLOYMENT_ID_COLUMN, deploymentId));
                 statementsToExecute.add(new SetNullableStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(),
-                        changelogTable.getName(), DEPLOYMENT_ID_COLUMN, "VARCHAR(10)", false));
+                        tableName, DEPLOYMENT_ID_COLUMN, "VARCHAR(10)", false));
 
                 ExecutorService executorService = Scope.getCurrentScope().getSingleton(ExecutorService.class);
                 Executor executor = executorService.getExecutor(LiquibaseConstants.JDBC_EXECUTOR, liquibase.getDatabase());
