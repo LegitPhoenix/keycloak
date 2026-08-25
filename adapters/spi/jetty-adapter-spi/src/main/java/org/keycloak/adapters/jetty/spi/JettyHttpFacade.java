@@ -117,7 +117,11 @@ public class JettyHttpFacade implements HttpFacade {
                 }
             }
             if (cookie == null) return null;
-            return new Cookie(cookie.getName(), cookie.getValue(), cookie.getVersion(), cookie.getDomain(), cookie.getPath());
+            return new Cookie(sanitizeCRLF(cookie.getName()), sanitizeCRLF(cookie.getValue()), cookie.getVersion(), sanitizeCRLF(cookie.getDomain()), sanitizeCRLF(cookie.getPath()));
+        }
+
+        private String sanitizeCRLF(String input) {
+            return input == null ? null : input.replaceAll("[\r\n]", "");
         }
 
         @Override
