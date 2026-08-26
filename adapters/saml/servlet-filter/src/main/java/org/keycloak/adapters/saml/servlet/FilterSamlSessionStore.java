@@ -125,7 +125,7 @@ public class FilterSamlSessionStore extends FilterSessionStore implements SamlSe
             log.debug("session was null, returning false");
             return false;
         }
-        final SamlSession samlSession = SamlUtil.validateSamlSession(session.getAttribute(SamlSession.class.getName()), deployment);
+        final SamlSession samlSession = SamlUtil.validateSamlSession(session.getAttribute(SAML_SESSION_ATTRIBUTE), deployment);
         if (samlSession == null) {
             log.debug("SamlSession was not in session, returning null");
             return false;
@@ -141,7 +141,7 @@ public class FilterSamlSessionStore extends FilterSessionStore implements SamlSe
 
     public HttpServletRequestWrapper getWrap() {
         HttpSession session = request.getSession(true);
-        final SamlSession samlSession = (SamlSession)session.getAttribute(SamlSession.class.getName());
+        final SamlSession samlSession = (SamlSession)session.getAttribute(SAML_SESSION_ATTRIBUTE);
         final KeycloakAccount account = samlSession;
         return buildWrapper(session, account);
     }
@@ -149,7 +149,7 @@ public class FilterSamlSessionStore extends FilterSessionStore implements SamlSe
     @Override
     public void saveAccount(SamlSession account) {
         HttpSession session = request.getSession(true);
-        session.setAttribute(SamlSession.class.getName(), account);
+        session.setAttribute(SAML_SESSION_ATTRIBUTE, account);
         if (idMapper != null) idMapper.map(account.getSessionIndex(),  account.getPrincipal().getSamlSubject(), session.getId());
     }
 
@@ -157,7 +157,7 @@ public class FilterSamlSessionStore extends FilterSessionStore implements SamlSe
     public SamlSession getAccount() {
         HttpSession session = request.getSession(false);
         if (session == null) return null;
-        return (SamlSession)session.getAttribute(SamlSession.class.getName());
+        return (SamlSession)session.getAttribute(SAML_SESSION_ATTRIBUTE);
     }
 
     @Override
