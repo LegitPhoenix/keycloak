@@ -98,12 +98,25 @@ class WrappedHttpServletRequest implements Request {
         }
 
         for (javax.servlet.http.Cookie cookie : request.getCookies()) {
-            if (cookie.getName().equals(cookieName)) {
-                return new Cookie(cookie.getName(), cookie.getValue(), cookie.getVersion(), cookie.getDomain(), cookie.getPath());
+            String name = cookie.getName();
+            String value = cookie.getValue();
+            String domain = cookie.getDomain();
+            String path = cookie.getPath();
+            
+            if (containsCRLF(name) || containsCRLF(value) || containsCRLF(domain) || containsCRLF(path)) {
+                continue;
+            }
+            
+            if (name.equals(cookieName)) {
+                return new Cookie(name, value, cookie.getVersion(), domain, path);
             }
         }
 
         return null;
+    }
+
+    private boolean containsCRLF(String s) {
+        return s != null && (s.indexOf('\r') >= 0 || s.indexOf('\n') >= 0);
     }
 
     @Override
