@@ -104,7 +104,8 @@ public class KeycloakAuthenticationEntryPoint implements AuthenticationEntryPoin
         if (request.getSession(false) == null && KeycloakCookieBasedRedirect.getRedirectUrlFromCookie(request) == null) {
             // If no session exists yet at this point, then apparently the redirect URL is not
             // stored in a session. We'll store it in a cookie instead.
-            response.addCookie(KeycloakCookieBasedRedirect.createCookieFromRedirectUrl(request.getRequestURI()));
+            String sanitizedUri = request.getRequestURI().replaceAll("[\r\n]", "");
+            response.addCookie(KeycloakCookieBasedRedirect.createCookieFromRedirectUrl(sanitizedUri));
         }
 
         String queryParameters = "";
@@ -118,7 +119,8 @@ public class KeycloakAuthenticationEntryPoint implements AuthenticationEntryPoin
     }
 
     protected void commenceUnauthorizedResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.addHeader(HttpHeaders.WWW_AUTHENTICATE, String.format("Bearer realm=\"%s\"", realm));
+        String sanitizedRealm = realm.replaceAll("[\r\n]", "");
+        response.addHeader(HttpHeaders.WWW_AUTHENTICATE, String.format("Bearer realm=\"%s\"", sanitizedRealm));
         response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
     }
 
