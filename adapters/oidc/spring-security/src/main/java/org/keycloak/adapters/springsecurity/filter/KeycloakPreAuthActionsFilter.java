@@ -91,7 +91,9 @@ public class KeycloakPreAuthActionsFilter extends GenericFilterBean implements A
 
         PreAuthActionsHandler handler = preAuthActionsHandlerFactory.createPreAuthActionsHandler(facade);
         if (handler.handleRequest()) {
-            log.debug("Pre-auth filter handled request: {}", ((HttpServletRequest) request).getRequestURI());
+            String requestUri = ((HttpServletRequest) request).getRequestURI();
+            String sanitizedUri = requestUri.replace("\r", "\\r").replace("\n", "\\n");
+            log.debug("Pre-auth filter handled request: {}", sanitizedUri);
         } else {
             chain.doFilter(request, response);
         }
