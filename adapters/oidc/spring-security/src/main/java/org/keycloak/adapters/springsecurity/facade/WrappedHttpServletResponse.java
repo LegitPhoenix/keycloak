@@ -82,9 +82,11 @@ class WrappedHttpServletResponse implements Response {
             method = Cookie.class.getMethod("setHttpOnly", boolean.class);
             method.invoke(cookie, httpOnly);
         } catch (NoSuchMethodException e) {
-            log.warn("Unable to set httpOnly on cookie [{}]; no such method on javax.servlet.http.Cookie", cookie.getName());
+            String safeName = cookie.getName().replace("\r", "").replace("\n", "");
+            log.warn("Unable to set httpOnly on cookie [{}]; no such method on javax.servlet.http.Cookie", safeName);
         } catch (ReflectiveOperationException e) {
-            log.error("Unable to set httpOnly on cookie [{}]", cookie.getName(), e);
+            String safeName = cookie.getName().replace("\r", "").replace("\n", "");
+            log.error("Unable to set httpOnly on cookie [{}]", safeName, e);
         }
     }
 
