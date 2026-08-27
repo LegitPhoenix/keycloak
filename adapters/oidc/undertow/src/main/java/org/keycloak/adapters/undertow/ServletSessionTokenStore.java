@@ -92,8 +92,8 @@ public class ServletSessionTokenStore implements AdapterTokenStore {
         } else {
             log.debug("Refresh failed. Account was not active. Returning null and invalidating Http session");
             try {
-                session.removeAttribute(KeycloakUndertowAccount.class.getName());
-                session.removeAttribute(KeycloakSecurityContext.class.getName());
+                session.removeAttribute(KEYCLOAK_ACCOUNT_ATTRIBUTE);
+                session.removeAttribute(KEYCLOAK_SECURITY_CONTEXT_ATTRIBUTE);
                 session.invalidate();
             } catch (Exception e) {
                 log.debug("Failed to invalidate session, might already be invalidated");
@@ -106,8 +106,8 @@ public class ServletSessionTokenStore implements AdapterTokenStore {
     public void saveAccountInfo(OidcKeycloakAccount account) {
         final ServletRequestContext servletRequestContext = exchange.getAttachment(ServletRequestContext.ATTACHMENT_KEY);
         HttpSession session = getSession(true);
-        session.setAttribute(KeycloakUndertowAccount.class.getName(), account);
-        session.setAttribute(KeycloakSecurityContext.class.getName(), account.getKeycloakSecurityContext());
+        session.setAttribute(KEYCLOAK_ACCOUNT_ATTRIBUTE, account);
+        session.setAttribute(KEYCLOAK_SECURITY_CONTEXT_ATTRIBUTE, account.getKeycloakSecurityContext());
         sessionManagement.login(servletRequestContext.getDeployment().getSessionManager());
     }
 
@@ -115,15 +115,15 @@ public class ServletSessionTokenStore implements AdapterTokenStore {
     public void logout() {
         final ServletRequestContext servletRequestContext = exchange.getAttachment(ServletRequestContext.ATTACHMENT_KEY);
         HttpServletRequest req = (HttpServletRequest) servletRequestContext.getServletRequest();
-        req.removeAttribute(KeycloakUndertowAccount.class.getName());
-        req.removeAttribute(KeycloakSecurityContext.class.getName());
+        req.removeAttribute(KEYCLOAK_ACCOUNT_ATTRIBUTE);
+        req.removeAttribute(KEYCLOAK_SECURITY_CONTEXT_ATTRIBUTE);
         HttpSession session = req.getSession(false);
         if (session == null) return;
         try {
-            KeycloakUndertowAccount account = (KeycloakUndertowAccount) session.getAttribute(KeycloakUndertowAccount.class.getName());
+            KeycloakUndertowAccount account = (KeycloakUndertowAccount) session.getAttribute(KEYCLOAK_ACCOUNT_ATTRIBUTE);
             if (account == null) return;
-            session.removeAttribute(KeycloakSecurityContext.class.getName());
-            session.removeAttribute(KeycloakUndertowAccount.class.getName());
+            session.removeAttribute(KEYCLOAK_SECURITY_CONTEXT_ATTRIBUTE);
+            session.removeAttribute(KEYCLOAK_ACCOUNT_ATTRIBUTE);
         } catch (IllegalStateException ise) {
             // Session may be already logged-out in case that app has adminUrl
             log.debugf("Session %s logged-out already", session.getId());
