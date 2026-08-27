@@ -88,10 +88,14 @@ public class JettyAdapterSessionStore implements AdapterSessionStore {
         synchronized (session) {
             // But only if it is not set already, or we save every uri that leads to a login form redirect
             if (session.getAttribute(FormAuthenticator.__J_URI) == null) {
-                StringBuffer buf = myRequest.getRequestURL();
-                if (myRequest.getQueryString() != null)
-                    buf.append("?").append(myRequest.getQueryString());
-                session.setAttribute(FormAuthenticator.__J_URI, buf.toString());
+                String uri = myRequest.getRequestURI();
+                if (myRequest.getQueryString() != null) {
+                    uri = uri + "?" + myRequest.getQueryString();
+                }
+                if (uri.length() > 2048) {
+                    uri = uri.substring(0, 2048);
+                }
+                session.setAttribute(FormAuthenticator.__J_URI, uri);
                 session.setAttribute(JettyHttpFacade.__J_METHOD, myRequest.getMethod());
 
                 if ("application/x-www-form-urlencoded".equals(myRequest.getContentType()) && "POST".equalsIgnoreCase(myRequest.getMethod())) {
