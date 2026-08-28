@@ -45,7 +45,7 @@
 
         <project.build-time>${timestamp}</project.build-time>
 
-        <wildfly.version>26.1.1.Final</wildfly.version>
+        <wildfly.version>34.0.0.Final</wildfly.version>
         <wildfly.build-tools.version>1.2.13.Final</wildfly.build-tools.version>
         <wildfly.core.version>18.1.1.Final</wildfly.core.version>
         <apache.httpcomponents.fuse.version>4.5.2</apache.httpcomponents.fuse.version>
@@ -75,11 +75,11 @@
         <cxf.jaxrs.version>3.3.10</cxf.jaxrs.version>
         <cxf.undertow.version>3.3.10</cxf.undertow.version>
         <dom4j.version>2.1.3</dom4j.version>
-        <h2.version>2.1.214</h2.version>
+        <h2.version>2.2.220</h2.version>
         <jakarta.persistence.version>2.2.3</jakarta.persistence.version>
         <hibernate-orm.version>5.6.14.Final</hibernate-orm.version>
         <hibernate.c3p0.version>${hibernate-orm.version}</hibernate.c3p0.version>
-        <infinispan.version>14.0.4.Final</infinispan.version>
+        <infinispan.version>15.0.14.Final</infinispan.version>
         <infinispan.protostream.processor.version>4.6.0.Final</infinispan.protostream.processor.version>
         <jackson.version>2.13.4</jackson.version>
         <jackson.databind.version>2.13.4.2</jackson.databind.version>
@@ -93,7 +93,7 @@
         <jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec.version>2.0.1.Final</jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec.version>
         <jboss.spec.javax.servlet.jsp.jboss-jsp-api_2.3_spec.version>2.0.0.Final</jboss.spec.javax.servlet.jsp.jboss-jsp-api_2.3_spec.version>
         <log4j.version>1.2.17</log4j.version>
-        <resteasy.version>4.7.7.Final</resteasy.version>
+        <resteasy.version>5.0.10.Final</resteasy.version>
         <resteasy.undertow.version>${resteasy.version}</resteasy.undertow.version>
         <owasp.html.sanitizer.version>20211018.2</owasp.html.sanitizer.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
@@ -147,9 +147,9 @@
 
         <!-- Databases -->
         <mysql.version>8.0.23</mysql.version>
-        <mysql-jdbc.version>8.0.30</mysql-jdbc.version>
+        <mysql-jdbc.version>8.0.31</mysql-jdbc.version>
         <postgresql.version>13.2</postgresql.version>
-        <postgresql-jdbc.version>42.5.1</postgresql-jdbc.version>
+        <postgresql-jdbc.version>42.5.5</postgresql-jdbc.version>
         <mariadb.version>10.6</mariadb.version>
         <mariadb-jdbc.version>2.7.2</mariadb-jdbc.version>
         <mssql.version>2019-latest</mssql.version>
@@ -196,7 +196,7 @@
         <surefire.memory.metaspace>96m</surefire.memory.metaspace>
         <surefire.memory.metaspace.max>512m</surefire.memory.metaspace.max>
         <surefire.memory.settings>-Xms${surefire.memory.Xms} -Xmx${surefire.memory.Xmx} -XX:MetaspaceSize=${surefire.memory.metaspace} -XX:MaxMetaspaceSize=${surefire.memory.metaspace.max}</surefire.memory.settings>
-        <surefire.system.args></surefire.system.args>
+        <surefire.system.args/>
 
         <!-- Tomcat versions -->
         <tomcat8.version>8.5.76</tomcat8.version>
@@ -264,7 +264,7 @@
         </developer>
     </developers>
 
-    <contributors></contributors>
+    <contributors/>
 
     <modules>
         <module>boms</module>
