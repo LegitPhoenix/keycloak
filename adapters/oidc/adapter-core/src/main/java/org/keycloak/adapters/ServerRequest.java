@@ -252,6 +252,26 @@ public class ServerRequest {
             throw new IOException("You need to configure URI for register/unregister node for application " + deployment.getResourceName());
         }
 
+        try {
+            URI endpointUri = new URI(endpointUrl);
+            URI authServerUri = new URI(deployment.getAuthServerBaseUrl());
+            
+            if (!endpointUri.getScheme().equalsIgnoreCase(authServerUri.getScheme())) {
+                throw new IOException("Invalid endpoint URL scheme. Expected: " + authServerUri.getScheme());
+            }
+            
+            if (!endpointUri.getHost().equalsIgnoreCase(authServerUri.getHost())) {
+                throw new IOException("Invalid endpoint URL host. Must target configured auth server: " + authServerUri.getHost());
+            }
+            
+            // Optional: validate port if auth server specifies one
+            if (authServerUri.getPort() != -1 && endpointUri.getPort() != authServerUri.getPort()) {
+                throw new IOException("Invalid endpoint URL port. Expected: " + authServerUri.getPort());
+            }
+        } catch (URISyntaxException e) {
+            throw new IOException("Malformed endpoint URL: " + endpointUrl, e);
+        }
+
         List<NameValuePair> formparams = new ArrayList<>();
         formparams.add(new BasicNameValuePair(AdapterConstants.CLIENT_CLUSTER_HOST, host));
 
