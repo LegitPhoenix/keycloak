@@ -64,8 +64,50 @@ public class HttpUtil {
     private static SSLConnectionSocketFactory sslsf;
     private static final AtomicBoolean tlsWarningEmitted = new AtomicBoolean();
 
+    private static void validateUrl(String url) {
+        if (url == null || url.trim().isEmpty()) {
+            throw new IllegalArgumentException("URL cannot be null or empty");
+        }
+        
+        try {
+            java.net.URI uri = new java.net.URI(url);
+            String scheme = uri.getScheme();
+            
+            // Only allow http and https protocols
+            if (scheme == null || (!scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https"))) {
+                throw new IllegalArgumentException("Only HTTP and HTTPS protocols are allowed");
+            }
+            
+            String host = uri.getHost();
+            if (host == null || host.trim().isEmpty()) {
+                throw new IllegalArgumentException("URL must contain a valid host");
+            }
+            
+            // Block localhost and loopback addresses
+            if (host.equalsIgnoreCase("localhost") || 
+                host.equals("127.0.0.1") || 
+                host.equals("::1") ||
+                host.startsWith("127.") ||
+                host.equals("0.0.0.0")) {
+                throw new IllegalArgumentException("Requests to localhost are not allowed");
+            }
+            
+            // Block private IP ranges
+            java.net.InetAddress addr = java.net.InetAddress.getByName(host);
+            if (addr.isLoopbackAddress() || addr.isLinkLocalAddress() || addr.isSiteLocalAddress()) {
+                throw new IllegalArgumentException("Requests to private IP addresses are not allowed");
+            }
+            
+        } catch (java.net.URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid URL format: " + e.getMessage(), e);
+        } catch (java.net.UnknownHostException e) {
+            throw new IllegalArgumentException("Cannot resolve host: " + e.getMessage(), e);
+        }
+    }
+
     public static InputStream doGet(String url, String acceptType, String authorization) {
         try {
+            validateUrl(url);
             HttpGet request = new HttpGet(url);
             request.setHeader(HttpHeaders.ACCEPT, acceptType);
             return doRequest(authorization, request);
@@ -76,6 +118,7 @@ public class HttpUtil {
 
     public static InputStream doPost(String url, String contentType, String acceptType, String content, String authorization) {
         try {
+            validateUrl(url);
             return doPostOrPut(contentType, acceptType, content, authorization, new HttpPost(url));
         } catch (IOException e) {
             throw new RuntimeException("Failed to send request - " + e.getMessage(), e);
@@ -84,6 +127,7 @@ public class HttpUtil {
 
     public static InputStream doPut(String url, String contentType, String acceptType, String content, String authorization) {
         try {
+            validateUrl(url);
             return doPostOrPut(contentType, acceptType, content, authorization, new HttpPut(url));
         } catch (IOException e) {
             throw new RuntimeException("Failed to send request - " + e.getMessage(), e);
@@ -92,6 +136,7 @@ public class HttpUtil {
 
     public static void doDelete(String url, String authorization) {
         try {
+            validateUrl(url);
             HttpDelete request = new HttpDelete(url);
             doRequest(authorization, request);
         } catch (IOException e) {
