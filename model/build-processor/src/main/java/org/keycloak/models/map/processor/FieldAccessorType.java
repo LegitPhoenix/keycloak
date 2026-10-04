@@ -39,7 +39,7 @@ enum FieldAccessorType {
     GETTER {
         @Override
         public boolean is(ExecutableElement method, String fieldName, Types types, TypeMirror fieldType) {
-            Pattern getter = Pattern.compile("(get|is)" + Pattern.quote(fieldName));
+            Pattern getter = Pattern.compile("^(get|is)" + Pattern.quote(fieldName) + "$");
             Name methodName = method.getSimpleName();
             return getter.matcher(methodName).matches() && method.getParameters().isEmpty() && types.isSameType(fieldType, method.getReturnType());
         }
