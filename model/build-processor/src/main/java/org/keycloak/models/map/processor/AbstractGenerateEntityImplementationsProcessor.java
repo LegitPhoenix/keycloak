@@ -301,10 +301,12 @@ public abstract class AbstractGenerateEntityImplementationsProcessor extends Abs
     }
 
     protected TypeMirror determineFieldType(String fieldName, HashSet<ExecutableElement> methods) {
-        Pattern getter = Pattern.compile("(get|is)" + Pattern.quote(fieldName));
         TypeMirror res = null;
         for (ExecutableElement method : methods) {
-            if (getter.matcher(method.getSimpleName()).matches() && method.getParameters().isEmpty()) {
+            String methodName = method.getSimpleName().toString();
+            if (method.getParameters().isEmpty() && 
+                ((methodName.startsWith("get") && methodName.substring(3).equals(fieldName)) ||
+                 (methodName.startsWith("is") && methodName.substring(2).equals(fieldName)))) {
                 return method.getReturnType();
             }
         }
