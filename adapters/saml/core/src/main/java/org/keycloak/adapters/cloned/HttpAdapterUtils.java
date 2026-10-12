@@ -37,6 +37,7 @@ import org.keycloak.saml.common.exceptions.ParsingException;
 public class HttpAdapterUtils {
 
     public static MultivaluedHashMap<String, KeyInfo> downloadKeysFromSamlDescriptor(HttpClient client, String descriptorUrl) throws HttpClientAdapterException {
+        validateSamlDescriptorUrl(descriptorUrl);
         try {
             HttpGet httpRequest = new HttpGet(descriptorUrl);
             HttpResponse response = client.execute(httpRequest);
@@ -61,6 +62,47 @@ public class HttpAdapterUtils {
             return res;
         } catch (IOException | ParsingException e) {
             throw new HttpClientAdapterException("IO error", e);
+        }
+    }
+
+    private static void validateSamlDescriptorUrl(String descriptorUrl) throws HttpClientAdapterException {
+        try {
+            java.net.URI uri = new java.net.URI(descriptorUrl);
+            String scheme = uri.getScheme();
+            if (scheme == null || (!scheme.equalsIgnoreCase("https") && !scheme.equalsIgnoreCase("http"))) {
+                throw new HttpClientAdapterException("Invalid URL scheme. Only http and https are allowed.");
+            }
+
+            String host = uri.getHost();
+            if (host == null || host.isEmpty()) {
+                throw new HttpClientAdapterException("URL must contain a valid host.");
+            }
+
+            String hostLower = host.toLowerCase();
+            if (hostLower.equals("localhost") || hostLower.equals("::1") || hostLower.startsWith("127.")) {
+                throw new HttpClientAdapterException("Access to localhost is not allowed.");
+            }
+
+            java.net.InetAddress addr = java.net.InetAddress.getByName(host);
+            if (addr.isLoopbackAddress() || addr.isLinkLocalAddress() || addr.isSiteLocalAddress()) {
+                throw new HttpClientAdapterException("Access to private or internal IP addresses is not allowed.");
+            }
+
+            byte[] ipBytes = addr.getAddress();
+            if (ipBytes.length == 4) {
+                int firstOctet = ipBytes[0] & 0xFF;
+                int secondOctet = ipBytes[1] & 0xFF;
+                if (firstOctet == 10 || 
+                    (firstOctet == 172 && secondOctet >= 16 && secondOctet <= 31) ||
+                    (firstOctet == 192 && secondOctet == 168) ||
+                    (firstOctet == 169 && secondOctet == 254)) {
+                    throw new HttpClientAdapterException("Access to private or internal IP addresses is not allowed.");
+                }
+            }
+        } catch (java.net.URISyntaxException e) {
+            throw new HttpClientAdapterException("Invalid URL format: " + e.getMessage(), e);
+        } catch (java.net.UnknownHostException e) {
+            throw new HttpClientAdapterException("Unable to resolve host: " + e.getMessage(), e);
         }
     }
 
