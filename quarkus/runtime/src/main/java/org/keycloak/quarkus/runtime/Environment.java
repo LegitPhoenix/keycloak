@@ -38,6 +38,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.keycloak.common.Profile;
 import org.keycloak.common.profile.PropertiesFileProfileConfigResolver;
 import org.keycloak.quarkus.runtime.configuration.PersistedConfigSource;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 
 public final class Environment {
 
@@ -67,7 +69,21 @@ public final class Environment {
         String homeDir = getHomeDir();
 
         if (homeDir != null) {
-            return Paths.get(homeDir);
+            try {
+                Path path = Paths.get(homeDir);
+                Path normalizedPath = path.normalize().toAbsolutePath();
+                
+                // Validate the path exists and is a directory
+                if (!Files.exists(normalizedPath) || !Files.isDirectory(normalizedPath)) {
+                    // Log warning about invalid home directory
+                    return null;
+                }
+                
+                return normalizedPath;
+            } catch (InvalidPathException | SecurityException e) {
+                // Log security warning about invalid path
+                return null;
+            }
         }
 
         return null;
